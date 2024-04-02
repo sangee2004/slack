@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
 )
 
@@ -22,25 +23,29 @@ type args struct {
 
 func main() {
 	if os.Getenv("GPTSCRIPT_SLACK_TOKEN") == "" {
-		panic("GPTSCRIPT_SLACK_TOKEN is not set")
+		logrus.Error("GPTSCRIPT_SLACK_TOKEN is not set")
+		os.Exit(1)
 	}
 
 	slackClient := slack.New(os.Getenv("GPTSCRIPT_SLACK_TOKEN"))
 
 	if len(os.Args) != 2 {
-		panic("Usage: " + os.Args[0] + " <JSON parameters>")
+		logrus.Errorf("Usage: %s <JSON parameters>", os.Args[0])
+		os.Exit(1)
 	}
 
 	var a args
 	if err := json.Unmarshal([]byte(os.Args[1]), &a); err != nil {
-		panic(err)
+		logrus.Errorf("failed to parse arguments: %v", err)
+		os.Exit(1)
 	}
 
 	var err error
 	switch a.Command {
 	case "search_messages":
 		if a.Query == "" {
-			panic("query is required for search")
+			logrus.Error("query is required for search")
+			os.Exit(1)
 		}
 		err = search(slackClient, a.Query, a.WithContext == "true")
 	case "list_channels":
@@ -48,11 +53,13 @@ func main() {
 	case "list_users":
 		err = listUsers(slackClient)
 	default:
-		panic("unknown command: " + a.Command)
+		logrus.Errorf("unknown command: %s", a.Command)
+		os.Exit(1)
 	}
 
 	if err != nil {
-		panic(err)
+		logrus.Error(err)
+		os.Exit(1)
 	}
 }
 
