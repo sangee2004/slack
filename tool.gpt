@@ -4,4 +4,16 @@ Args: command: the command to run - must be one of "search_messages", "list_chan
 Args: query: (required for "search_messages") the query to search for in messages
 Args: withContext: (optional for "search_messages", default false) whether to print the other messages before and after each match
 
+credential: slack-credential-tool
 #!${GPTSCRIPT_TOOL_DIR}/bin/gptscript-go-tool "${GPTSCRIPT_INPUT}"
+
+---
+name: slack-credential-tool
+
+#!/usr/bin/env bash
+
+output=$(gptscript -q --disable-cache sys.prompt '{"message":"Please enter your slack credential.","fields":"credential","sensitive":"true"}')
+credential=$(echo $output | jq -r '.credential')
+echo "{\"env\":{\"\GPTSCRIPT_SLACK_TOKEN":\"$credential\"}}"
+
+
