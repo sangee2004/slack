@@ -15,5 +15,3 @@ name: slack-credential-tool
 output=$(gptscript -q --disable-cache sys.prompt '{"message":"Please enter your slack credential.","fields":"credential","sensitive":"true"}')
 credential=$(echo $output | jq -r '.credential')
 echo "{\"env\":{\"\GPTSCRIPT_SLACK_TOKEN":\"$credential\"}}"
-
-
