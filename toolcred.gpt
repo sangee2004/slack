@@ -1,0 +1,10 @@
+Description: Queries a Slack workspace to get information about users, channels, and messages.
+
+Args: command: the command to run - must be one of "search_messages", "list_channels", or "list_users"
+Args: query: (required for "search_messages") the query to search for in messages
+Args: withContext: (optional for "search_messages", default false) whether to print the other messages before and after each match
+
+credential: github.com/sangee2004/gptscript/examples/slack-credential-tool.gpt
+
+#!${GPTSCRIPT_TOOL_DIR}/bin/gptscript-go-tool "${GPTSCRIPT_INPUT}"
+
